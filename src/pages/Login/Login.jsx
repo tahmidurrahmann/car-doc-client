@@ -2,7 +2,7 @@ import Lottie from "lottie-react";
 import animation from "../../assets/Animation - 1700378841837.json"
 import Container from "../../Container/Container";
 import logo from "../../assets/Group 1.svg"
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -14,8 +14,12 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Login = () => {
 
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const { signInUser, googleLogin, user } = useAuth();
     const axiosSecure = useAxiosSecure();
+    let from = location.state?.from?.pathname || "/";
 
     useEffect(() => {
         loadCaptchaEnginge(6)
@@ -32,6 +36,7 @@ const Login = () => {
         signInUser(email, password)
         .then(async ()=>{
             toast.success("Login successful")
+            navigate(from, { replace: true })
         })
         .catch(error => {
             toast.error(error.message)
@@ -58,6 +63,7 @@ const Login = () => {
             const res = await axiosSecure.post("/users", postEmailPass)
             console.log(res?.data);
             toast.success("Google login successful")
+            navigate(from, { replace: true })
         })
         .catch(error => {
             toast.error(error.message)

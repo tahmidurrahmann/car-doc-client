@@ -2,7 +2,7 @@ import Lottie from "lottie-react";
 import animation from "../../assets/Animation - 1700378841837.json"
 import Container from "../../Container/Container";
 import logo from "../../assets/Group 1.svg"
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
@@ -18,11 +18,14 @@ const imageUploadUrl = `https://api.imgbb.com/1/upload?key=${imgbb_api_key}`;
 const Register = () => {
 
     const auth = getAuth(app);
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const {
         register, handleSubmit, formState: { errors } } = useForm();
 
     const { createUser, googleLogin, user } = useAuth();
+    let from = location.state?.from?.pathname || "/";
 
     const axiosPublic = useAxiosPublic();
     const axiosSecure = useAxiosSecure();
@@ -54,6 +57,7 @@ const Register = () => {
                     const res = await axiosSecure.post("/users", postEmailPass)
                     console.log(res?.data);
                     toast.success("User Created Successfully")
+                    navigate(from, { replace: true })
                 }).catch((error) => {
                     toast.error(error.message)
                 });
@@ -73,6 +77,7 @@ const Register = () => {
                 const res = await axiosSecure.post("/users", postEmailPass)
                 console.log(res?.data);
                 toast.success("Google login successful")
+                navigate(from, { replace: true })
             })
             .catch(error => {
                 toast.error(error.message)
